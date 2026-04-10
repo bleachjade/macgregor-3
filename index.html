@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MacGregor's Original | Elite Burgers in Abbotsford</title>
-    
-    <!-- Tailwind CSS -->
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome for Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Three.js for 3D Background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <!-- GSAP for Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
@@ -51,9 +48,9 @@
     <style>
         /* Custom Styles & Utilities */
         :root {
-            cursor: none; 
+            cursor: none;
         }
-        
+
         body {
             background-color: #FDFBF7;
             color: #1A1A1A;
@@ -70,7 +67,7 @@
             width: 100vw;
             height: 100vh;
             z-index: -1;
-            pointer-events: none; /* Let clicks pass through to HTML */
+            pointer-events: none;
         }
 
         /* Custom Cursor */
@@ -84,11 +81,13 @@
             z-index: 9999;
             pointer-events: none;
         }
+
         .cursor-dot {
             width: 8px;
             height: 8px;
             background-color: #3168B1;
         }
+
         .cursor-outline {
             width: 40px;
             height: 40px;
@@ -111,6 +110,7 @@
             border-color: #3168B1;
             color: #FDFBF7;
         }
+
         .hover-order .cursor-dot {
             opacity: 0;
         }
@@ -119,7 +119,7 @@
         #loader {
             position: fixed;
             inset: 0;
-            background: #DFEAB5; 
+            background: #DFEAB5;
             z-index: 10000;
             display: flex;
             justify-content: center;
@@ -132,7 +132,7 @@
             color: transparent;
             -webkit-text-stroke: 2px #3168B1;
         }
-        
+
         /* Marquee */
         .marquee-container {
             overflow: hidden;
@@ -144,13 +144,20 @@
             transform: rotate(-2deg) scale(1.05);
             margin: 2rem 0;
         }
+
         .marquee-content {
             display: inline-block;
             animation: marquee 20s linear infinite;
         }
+
         @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
         }
 
         /* Glassmorphism Panels */
@@ -159,9 +166,9 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
         }
-        
+
         .glass-panel-dark {
             background: rgba(49, 104, 177, 0.85);
             backdrop-filter: blur(16px);
@@ -174,6 +181,7 @@
             overflow: hidden;
             border-radius: 2rem;
         }
+
         .parallax-img {
             width: 100%;
             height: 120%;
@@ -193,7 +201,7 @@
             opacity: 0.04;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        
+
         .glass-nav {
             background: rgba(253, 251, 247, 0.85);
             backdrop-filter: blur(12px);
@@ -201,74 +209,71 @@
         }
     </style>
 </head>
+
 <body class="antialiased selection:bg-mac-pink selection:text-mac-blue">
 
-    <!-- ThreeJS Canvas -->
     <canvas id="webgl-canvas"></canvas>
 
-    <!-- Custom Cursor -->
     <div class="cursor-dot"></div>
     <div class="cursor-outline">Order</div>
-    
-    <!-- Grain Overlay -->
+
     <div class="grain-overlay"></div>
 
-    <!-- Preloader -->
     <div id="loader">
         <div class="relative w-48 h-48 md:w-64 md:h-64 flex justify-center items-center text-[10rem] md:text-[14rem]">
-            <!-- Empty Burger (Faded) -->
             <i class="fa-solid fa-burger text-mac-blue/20 absolute"></i>
-            <!-- Filled Burger (Animated via clip-path) -->
-            <div id="burger-fill" class="absolute inset-0 text-mac-blue flex justify-center items-center" style="clip-path: inset(100% 0 0 0);">
+            <div id="burger-fill" class="absolute inset-0 text-mac-blue flex justify-center items-center"
+                style="clip-path: inset(100% 0 0 0);">
                 <i class="fa-solid fa-burger"></i>
             </div>
         </div>
     </div>
 
-    <!-- Navigation -->
     <nav class="fixed w-full z-50 top-4 px-4 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto glass-nav shadow-lg rounded-full px-6 py-3 flex justify-between items-center">
             <a href="#" class="z-50" data-cursor="hover">
-                <img src="./assets/logo.png" alt="MacGregor's Original" class="h-8 md:h-12 object-contain transition-transform hover:scale-105">
+                <img src="./assets/logo.png" alt="MacGregor's Original"
+                    class="h-8 md:h-12 object-contain transition-transform hover:scale-105">
             </a>
-            
             <div class="hidden md:flex items-center gap-8 font-body font-bold text-sm tracking-widest uppercase">
                 <a href="#story" class="text-mac-blue hover:text-mac-pink transition-colors">The Story</a>
                 <a href="#menu" class="text-mac-blue hover:text-mac-pink transition-colors">The Goods</a>
-                <a href="https://www.macgregorsoriginal.com/products/index" class="bg-mac-blue text-mac-white px-8 py-3 rounded-full hover:bg-mac-pink hover:text-mac-blue transition-all transform hover:scale-105 shadow-md" data-cursor="order">
+                <a href="https://www.macgregorsoriginal.com/products/index"
+                    class="bg-mac-blue text-mac-white px-8 py-3 rounded-full hover:bg-mac-pink hover:text-mac-blue transition-all transform hover:scale-105 shadow-md"
+                    data-cursor="order">
                     Order Now
                 </a>
             </div>
-            
             <div class="md:hidden text-mac-blue text-2xl">
                 <i class="fa-solid fa-bars"></i>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="relative h-screen flex items-center justify-center">
         <div class="relative z-10 text-center w-full max-w-7xl px-4 flex flex-col items-center mt-20">
             <h1 class="font-display text-[15vw] leading-[0.85] m-0 uppercase flex flex-col items-center">
-                <span class="hero-text-1 block text-mac-blue transform translate-y-24 opacity-0 drop-shadow-xl">Melbourne's</span>
-                <span class="hero-text-2 block text-mac-pink transform translate-y-24 opacity-0 drop-shadow-xl">Elite</span>
+                <span
+                    class="hero-text-1 block text-mac-blue transform translate-y-24 opacity-0 drop-shadow-xl">Melbourne's</span>
+                <span
+                    class="hero-text-2 block text-mac-pink transform translate-y-24 opacity-0 drop-shadow-xl">Elite</span>
                 <span class="hero-text-3 block text-outline-blue transform translate-y-24 opacity-0">Burgers</span>
             </h1>
-            
             <div class="hero-subtext opacity-0 mt-8 glass-panel px-8 py-4 rounded-full inline-block">
                 <p class="font-body text-lg md:text-xl text-mac-blue font-bold">
                     Born in the iconic Abbotsford general store.
                 </p>
             </div>
-
             <div class="mt-12 opacity-0 hero-btn">
-                <a href="https://www.macgregorsoriginal.com/products/index" class="inline-flex items-center justify-center px-10 py-5 text-xl font-display tracking-widest uppercase text-mac-blue bg-mac-green rounded-full shadow-xl hover:bg-mac-pink hover:text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 border-2 border-white/50" data-cursor="order">
+                <a href="https://www.macgregorsoriginal.com/products/index"
+                    class="inline-flex items-center justify-center px-10 py-5 text-xl font-display tracking-widest uppercase text-mac-blue bg-mac-green rounded-full shadow-xl hover:bg-mac-pink hover:text-white hover:scale-105 hover:shadow-2xl transition-all duration-300 border-2 border-white/50"
+                    data-cursor="order">
                     Order The Original
                 </a>
             </div>
         </div>
-
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 hero-scroll">
+        <div
+            class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 hero-scroll">
             <span class="font-body text-xs tracking-widest uppercase text-mac-blue font-bold">Scroll Down</span>
             <div class="w-[2px] h-12 bg-mac-blue/20 overflow-hidden rounded-full">
                 <div class="w-full h-full bg-mac-pink origin-top scroll-line-anim"></div>
@@ -276,46 +281,51 @@
         </div>
     </section>
 
-    <!-- Marquee Banner -->
     <div class="marquee-container shadow-2xl z-20 relative border-y-4 border-mac-pink">
         <div class="marquee-content font-display text-4xl tracking-wider text-mac-white uppercase drop-shadow-md">
-            MELBOURNE'S ELITE BURGERS • MACGREGOR'S ORIGINAL • THE ABBOTSFORD GENERAL STORE • ZERO COMPROMISE • MELBOURNE'S ELITE BURGERS • MACGREGOR'S ORIGINAL • THE ABBOTSFORD GENERAL STORE • ZERO COMPROMISE •
+            MELBOURNE'S ELITE BURGERS • MACGREGOR'S ORIGINAL • THE ABBOTSFORD GENERAL STORE • ZERO COMPROMISE •
+            MELBOURNE'S ELITE BURGERS • MACGREGOR'S ORIGINAL • THE ABBOTSFORD GENERAL STORE • ZERO COMPROMISE •
         </div>
     </div>
 
-    <!-- The Story / Location Section -->
     <section id="story" class="py-32 px-6 relative z-10">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center glass-panel rounded-[3rem] p-8 md:p-16">
-            
+        <div
+            class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center glass-panel rounded-[3rem] p-8 md:p-16">
             <div class="story-content space-y-8">
                 <h2 class="font-display text-7xl md:text-8xl leading-none text-mac-blue uppercase drop-shadow-sm">
                     The <br><span class="text-mac-pink">General</span><br><span class="text-outline-blue">Store</span>
                 </h2>
                 <div class="w-24 h-2 bg-mac-green rounded-full"></div>
                 <p class="font-body text-lg text-mac-black/80 leading-relaxed font-semibold">
-                    We didn't just open a burger joint; we took over a piece of Melbourne history. Nestled inside the iconic Abbotsford general store building, MacGregor's Original pays homage to the past while defining the future of smash burgers.
+                    We didn't just open a burger joint; we took over a piece of Melbourne history. Nestled inside the
+                    iconic Abbotsford general store building, MacGregor's Original pays homage to the past while
+                    defining the future of smash burgers.
                 </p>
                 <p class="font-body text-lg text-mac-black/80 leading-relaxed font-semibold">
-                    This isn't fast food. This is an obsession with quality, local ingredients, and the perfect sear. We are the new local heroes.
+                    This isn't fast food. This is an obsession with quality, local ingredients, and the perfect sear. We
+                    are the new local heroes.
                 </p>
-                <a href="https://www.macgregorsoriginal.com/products/index" class="inline-block mt-8 font-display text-3xl text-mac-blue border-b-4 border-mac-pink pb-1 hover:text-mac-pink transition-colors" data-cursor="order">
+                <a href="https://www.macgregorsoriginal.com/products/index"
+                    class="inline-block mt-8 font-display text-3xl text-mac-blue border-b-4 border-mac-pink pb-1 hover:text-mac-pink transition-colors"
+                    data-cursor="order">
                     Taste the Legacy <i class="fa-solid fa-arrow-right ml-2 text-xl"></i>
                 </a>
             </div>
-
             <div class="story-image relative">
-                <div class="absolute -inset-6 bg-mac-blue/10 backdrop-blur-sm rounded-[2.5rem] transform translate-x-6 translate-y-6 border border-white/50"></div>
-                <div class="parallax-img-container h-[500px] relative z-10 shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1500&auto=format&fit=crop" alt="The Abbotsford General Store" class="parallax-img">
+                <div
+                    class="absolute -inset-6 bg-mac-blue/10 backdrop-blur-sm rounded-[2.5rem] transform translate-x-6 translate-y-6 border border-white/50">
                 </div>
-                
-                <div class="absolute -bottom-8 -left-8 bg-mac-green rounded-full w-40 h-40 flex items-center justify-center p-4 z-20 shadow-2xl badge-rotate border-4 border-white">
+                <div class="parallax-img-container h-[500px] relative z-10 shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1500&auto=format&fit=crop"
+                        alt="The Abbotsford General Store" class="parallax-img">
+                </div>
+                <div
+                    class="absolute -bottom-8 -left-8 bg-mac-green rounded-full w-40 h-40 flex items-center justify-center p-4 z-20 shadow-2xl badge-rotate border-4 border-white">
                     <svg viewBox="0 0 100 100" class="w-full h-full animate-spin-slow">
-                        <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="transparent" />
+                        <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+                            fill="transparent" />
                         <text class="font-display text-sm tracking-widest fill-mac-blue">
-                            <textPath href="#circlePath">
-                                ESTABLISHED IN ABBOTSFORD • LOCAL HEROES •
-                            </textPath>
+                            <textPath href="#circlePath">ESTABLISHED IN ABBOTSFORD • LOCAL HEROES •</textPath>
                         </text>
                     </svg>
                     <i class="fa-solid fa-burger absolute text-mac-pink text-3xl"></i>
@@ -324,7 +334,6 @@
         </div>
     </section>
 
-    <!-- The Menu Highlights -->
     <section id="menu" class="py-32 px-6 relative z-10">
         <div class="max-w-7xl mx-auto glass-panel-dark rounded-[3rem] p-8 md:p-16 shadow-2xl">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -332,70 +341,86 @@
                     <h2 class="font-display text-6xl md:text-8xl uppercase leading-none text-white">
                         The <span class="text-mac-peach">Goods</span>
                     </h2>
-                    <p class="font-body font-bold text-mac-lightblue mt-4 uppercase tracking-widest">Select your weapon</p>
+                    <p class="font-body font-bold text-mac-lightblue mt-4 uppercase tracking-widest">Select your weapon
+                    </p>
                 </div>
-                <a href="https://www.macgregorsoriginal.com/products/index" class="bg-mac-peach text-mac-blue px-8 py-4 rounded-full font-display tracking-widest text-xl uppercase hover:bg-white transition-colors shadow-lg" data-cursor="order">
+                <a href="https://www.macgregorsoriginal.com/products/index"
+                    class="bg-mac-peach text-mac-blue px-8 py-4 rounded-full font-display tracking-widest text-xl uppercase hover:bg-white transition-colors shadow-lg"
+                    data-cursor="order">
                     View Full Menu
                 </a>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Card 1 -->
-                <div class="menu-card group cursor-pointer bg-white/10 backdrop-blur-md rounded-[2rem] p-6 h-[420px] flex flex-col justify-between relative overflow-hidden transform transition-transform duration-500 hover:-translate-y-4 border border-white/20" onclick="window.location.href='https://www.macgregorsoriginal.com/products/index'" data-cursor="order">
+                <div class="menu-card group cursor-pointer bg-white/10 backdrop-blur-md rounded-[2rem] p-6 h-[420px] flex flex-col justify-between relative overflow-hidden transform transition-transform duration-500 hover:-translate-y-4 border border-white/20"
+                    onclick="window.location.href='https://www.macgregorsoriginal.com/products/index'"
+                    data-cursor="order">
                     <div class="relative z-10 text-white">
                         <h3 class="font-display text-4xl uppercase text-mac-green">The Original</h3>
-                        <p class="font-body text-sm mt-3 font-medium opacity-90">Double smashed patty, American cheese, house pickles, secret sauce.</p>
+                        <p class="font-body text-sm mt-3 font-medium opacity-90">Smashed beef, Jarlsberg & American
+                            cheese, yellow pickle sauce, big pickles, Martin's potato bun.</p>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1586816001966-79b736744398?q=80&w=800&auto=format&fit=crop" alt="Burger" class="w-full h-48 object-cover rounded-2xl mt-4 relative z-10 transform group-hover:scale-110 transition-transform duration-700 ease-out shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1586816001966-79b736744398?q=80&w=800&auto=format&fit=crop"
+                        alt="Burger"
+                        class="w-full h-48 object-cover rounded-2xl mt-4 relative z-10 transform group-hover:scale-110 transition-transform duration-700 ease-out shadow-lg">
                 </div>
-
-                <!-- Card 2 -->
-                <div class="menu-card group cursor-pointer bg-white/10 backdrop-blur-md rounded-[2rem] p-6 h-[420px] flex flex-col justify-between relative overflow-hidden transform transition-transform duration-500 hover:-translate-y-4 md:mt-12 border border-white/20" onclick="window.location.href='https://www.macgregorsoriginal.com/products/index'" data-cursor="order">
+                <div class="menu-card group cursor-pointer bg-white/10 backdrop-blur-md rounded-[2rem] p-6 h-[420px] flex flex-col justify-between relative overflow-hidden transform transition-transform duration-500 hover:-translate-y-4 md:mt-12 border border-white/20"
+                    onclick="window.location.href='https://www.macgregorsoriginal.com/products/index'"
+                    data-cursor="order">
                     <div class="relative z-10 text-white">
                         <h3 class="font-display text-4xl uppercase text-mac-pink">The Heavyweight</h3>
-                        <p class="font-body text-sm mt-3 font-medium opacity-90">Triple patty, bacon jam, smoked gouda, crispy onions.</p>
+                        <p class="font-body text-sm mt-3 font-medium opacity-90">Triple patty, bacon jam, smoked gouda,
+                            crispy onions.</p>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1553979459-d2229ba7433b?q=80&w=800&auto=format&fit=crop" alt="Burger" class="w-full h-48 object-cover rounded-2xl mt-4 relative z-10 transform group-hover:scale-110 transition-transform duration-700 ease-out shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1553979459-d2229ba7433b?q=80&w=800&auto=format&fit=crop"
+                        alt="Burger"
+                        class="w-full h-48 object-cover rounded-2xl mt-4 relative z-10 transform group-hover:scale-110 transition-transform duration-700 ease-out shadow-lg">
                 </div>
-
-                <!-- Card 3 -->
-                <div class="menu-card group cursor-pointer bg-white/10 backdrop-blur-md rounded-[2rem] p-6 h-[420px] flex flex-col justify-between relative overflow-hidden transform transition-transform duration-500 hover:-translate-y-4 border border-white/20" onclick="window.location.href='https://www.macgregorsoriginal.com/products/index'" data-cursor="order">
+                <div class="menu-card group cursor-pointer bg-white/10 backdrop-blur-md rounded-[2rem] p-6 h-[420px] flex flex-col justify-between relative overflow-hidden transform transition-transform duration-500 hover:-translate-y-4 border border-white/20"
+                    onclick="window.location.href='https://www.macgregorsoriginal.com/products/index'"
+                    data-cursor="order">
                     <div class="relative z-10 text-white">
                         <h3 class="font-display text-4xl uppercase text-mac-peach">Classic Fries</h3>
-                        <p class="font-body text-sm mt-3 font-medium opacity-90">Shoestring fries tossed in our signature chicken salt blend.</p>
+                        <p class="font-body text-sm mt-3 font-medium opacity-90">Shoestring fries tossed in our
+                            signature chicken salt blend.</p>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1576107232684-1279f390859f?q=80&w=800&auto=format&fit=crop" alt="Fries" class="w-full h-48 object-cover rounded-2xl mt-4 relative z-10 transform group-hover:scale-110 transition-transform duration-700 ease-out shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1576107232684-1279f390859f?q=80&w=800&auto=format&fit=crop"
+                        alt="Fries"
+                        class="w-full h-48 object-cover rounded-2xl mt-4 relative z-10 transform group-hover:scale-110 transition-transform duration-700 ease-out shadow-lg">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Massive CTA Section -->
     <section class="py-32 px-6 text-mac-blue text-center relative z-10 mb-10">
-        <div class="max-w-5xl mx-auto relative z-10 glass-panel rounded-[3rem] p-16 shadow-2xl border-4 border-mac-pink">
+        <div
+            class="max-w-5xl mx-auto relative z-10 glass-panel rounded-[3rem] p-16 shadow-2xl border-4 border-mac-pink">
             <h2 class="font-display text-6xl md:text-[8rem] uppercase leading-[0.9] mb-6 cta-text drop-shadow-md">
                 Craving <br> The Elite?
             </h2>
-            <p class="font-body text-xl md:text-2xl font-bold mb-10 text-mac-blue/80">Skip the line. Order online direct from the Abbotsford General Store.</p>
-            
-            <a href="https://www.macgregorsoriginal.com/products/index" class="inline-flex items-center justify-center px-12 py-6 font-display text-3xl tracking-widest uppercase text-mac-white bg-mac-blue rounded-full shadow-2xl hover:bg-mac-green hover:text-mac-blue hover:scale-105 transition-all duration-300 gap-4 border-2 border-white/20" data-cursor="order">
+            <p class="font-body text-xl md:text-2xl font-bold mb-10 text-mac-blue/80">Skip the line. Order online direct
+                from the Abbotsford General Store.</p>
+            <a href="https://www.macgregorsoriginal.com/products/index"
+                class="inline-flex items-center justify-center px-12 py-6 font-display text-3xl tracking-widest uppercase text-mac-white bg-mac-blue rounded-full shadow-2xl hover:bg-mac-green hover:text-mac-blue hover:scale-105 transition-all duration-300 gap-4 border-2 border-white/20"
+                data-cursor="order">
                 Place Order <i class="fa-solid fa-bolt"></i>
             </a>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-mac-blue py-16 px-6 relative z-10">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
             <div class="flex items-center">
-                <img src="./assets/logo.png" alt="MacGregor's Original" class="h-12 md:h-16 object-contain brightness-0 invert">
+                <img src="./assets/logo.png" alt="MacGregor's Original"
+                    class="h-12 md:h-16 object-contain brightness-0 invert">
             </div>
-            
             <div class="flex gap-6">
-                <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-mac-peach hover:bg-mac-pink hover:text-mac-blue transition-all text-xl"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-mac-peach hover:bg-mac-pink hover:text-mac-blue transition-all text-xl"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"
+                    class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-mac-peach hover:bg-mac-pink hover:text-mac-blue transition-all text-xl"><i
+                        class="fa-brands fa-instagram"></i></a>
+                <a href="#"
+                    class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-mac-peach hover:bg-mac-pink hover:text-mac-blue transition-all text-xl"><i
+                        class="fa-brands fa-facebook-f"></i></a>
             </div>
-            
             <div class="text-white/80 font-body text-sm text-center md:text-right font-medium">
                 <p>Located at the old General Store, Abbotsford.</p>
                 <p>&copy; 2024 MacGregor's Original. All rights reserved.</p>
@@ -403,13 +428,11 @@
         </div>
     </footer>
 
-    <!-- Three.js Scene Setup -->
     <script>
-        // --- THREE.JS REALISTIC BURGER SCENE ---
+        // --- THREE.JS POP ART / CEL SHADED BURGER SCENE ---
         const canvas = document.querySelector('#webgl-canvas');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color('#FDFBF7');
-        scene.fog = new THREE.FogExp2('#FDFBF7', 0.015);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
         camera.position.z = 28;
@@ -417,180 +440,170 @@
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        
-        // Lighting for realistic shadows and highlights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // Reduced from 0.7
-        scene.add(ambientLight);
 
-        const mainLight = new THREE.DirectionalLight(0xffffff, 0.8); // Reduced from 1.2
-        mainLight.position.set(5, 15, 10);
+        // Slightly softer lighting so the colors don't blow out to neon
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        mainLight.position.set(10, 20, 10);
         scene.add(mainLight);
 
-        // Subtle rim lights matching brand colors
-        const pinkLight = new THREE.PointLight(0xF0A1D4, 1.0, 50); // Reduced from 1.5
-        pinkLight.position.set(-8, -2, 5);
-        scene.add(pinkLight);
-
-        const blueLight = new THREE.PointLight(0x3168B1, 0.7, 50); // Reduced from 1.0
-        blueLight.position.set(8, -5, -5);
-        scene.add(blueLight);
-
-        // Group to hold all our ingredients
         const burgerGroup = new THREE.Group();
         scene.add(burgerGroup);
 
-        // --- TEXTURES & MATERIALS ---
-        
-        // We use a beautifully lit, solid gourmet "Brioche" material
-        const matBun = new THREE.MeshStandardMaterial({ 
-            color: 0xDA8D42, // Golden baked brown
-            roughness: 0.4,  // Slightly shiny for that premium egg-wash finish
-            metalness: 0.05 
-        });
-        
-        // Changed to brown patty
-        const matPatty = new THREE.MeshStandardMaterial({ 
-            color: 0x5C3A21, // Deep brown
-            roughness: 0.9,
-            metalness: 0.1 
-        });
+        // --- PROCEDURAL CHECKERED TEXTURE ---
+        const wrapCanvas = document.createElement('canvas');
+        wrapCanvas.width = 512;
+        wrapCanvas.height = 512;
+        const ctx = wrapCanvas.getContext('2d');
 
-        const matCheese = new THREE.MeshStandardMaterial({ 
-            color: 0xFFB800, 
-            roughness: 0.3, 
-            metalness: 0.1
-        });
+        const cols = 12;
+        const rows = 12;
+        const tileW = wrapCanvas.width / cols;
+        const tileH = wrapCanvas.height / rows;
 
-        const matTomato = new THREE.MeshStandardMaterial({ 
-            color: 0xD32323, 
-            roughness: 0.2, 
-            metalness: 0.1 
-        });
+        for (let i = 0; i < cols; i++) {
+            for (let j = 0; j < rows; j++) {
+                ctx.fillStyle = (i + j) % 2 === 0 ? '#FFFFFF' : '#3168B1';
+                ctx.fillRect(i * tileW, j * tileH, tileW, tileH);
+            }
+        }
 
-        const matLettuce = new THREE.MeshStandardMaterial({ 
-            color: 0x7ED957, 
-            roughness: 0.6
-        });
+        const checkerTexture = new THREE.CanvasTexture(wrapCanvas);
+        checkerTexture.wrapS = THREE.RepeatWrapping;
+        checkerTexture.wrapT = THREE.RepeatWrapping;
+        checkerTexture.repeat.set(2, 1);
+        checkerTexture.magFilter = THREE.NearestFilter;
 
-        // --- INGREDIENTS WITH PROCEDURAL GEOMETRY & BASE POSITIONS ---
-        
-        // 1. Top Bun (Group with Hemisphere, Bottom Cap, and 3D Sesame Seeds)
+        // --- POP ART MATERIALS (Toon) ---
+        const matBun = new THREE.MeshToonMaterial({ color: 0xDF8C38 });
+        const matPatty = new THREE.MeshToonMaterial({ color: 0x4A2A18 });
+
+        // FIX: Added DoubleSide so the back isn't white, and made colors richer/juicier
+        const matJarlsberg = new THREE.MeshToonMaterial({ color: 0xFFE87C, side: THREE.DoubleSide });
+        const matAmerican = new THREE.MeshToonMaterial({ color: 0xFF8C00, side: THREE.DoubleSide });
+
+        const matSauce = new THREE.MeshToonMaterial({ color: 0xFDCB6E });
+        const matPickle = new THREE.MeshToonMaterial({ color: 0x1B9C56 });
+        const matWrapper = new THREE.MeshToonMaterial({ map: checkerTexture, side: THREE.DoubleSide });
+
+        function addPopArtEdges(mesh, color = 0x1A1A1A, threshold = 35) {
+            const edges = new THREE.EdgesGeometry(mesh.geometry, threshold);
+            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: color, linewidth: 2 }));
+            mesh.add(line);
+        }
+
+        // --- INGREDIENTS ---
+
         const topBun = new THREE.Group();
-        topBun.userData = { baseY: 0.9, baseX: 0, baseZ: 0 }; // Lowered to fit thinner stack
-        
-        // The top dome
-        const topBunGeo = new THREE.SphereGeometry(3.6, 64, 32, 0, Math.PI * 2, 0, Math.PI / 2);
-        topBunGeo.scale(1, 0.65, 1); // Squash it to look like a burger bun
+        topBun.userData = { baseY: 1.8, baseX: 0, baseZ: 0 };
+        const topBunGeo = new THREE.SphereGeometry(3.6, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        topBunGeo.scale(1, 0.5, 1);
         const topBunMesh = new THREE.Mesh(topBunGeo, matBun);
+        addPopArtEdges(topBunMesh);
         topBun.add(topBunMesh);
 
-        // The flat bottom cap (fixes the hollow "see-through" effect)
-        const bunCapGeo = new THREE.CircleGeometry(3.6, 64);
+        const bunCapGeo = new THREE.CircleGeometry(3.6, 32);
         const bunCapMesh = new THREE.Mesh(bunCapGeo, matBun);
-        bunCapMesh.rotation.x = Math.PI / 2; // Face downwards
+        bunCapMesh.rotation.x = Math.PI / 2;
+        addPopArtEdges(bunCapMesh);
         topBun.add(bunCapMesh);
-
-        // Procedurally scatter 3D sesame seeds for realism!
-        const seedGeo = new THREE.SphereGeometry(0.08, 8, 8);
-        seedGeo.scale(1, 2.1, 1); // Stretch sphere into a seed shape
-        const seedMat = new THREE.MeshStandardMaterial({ color: 0xF5E6C4, roughness: 0.9 });
-        for(let i=0; i<80; i++) {
-            const phi = Math.acos(1 - (Math.random() * 0.75)); // Focus seeds near the upper curve
-            const theta = Math.random() * Math.PI * 2;
-            
-            const seed = new THREE.Mesh(seedGeo, seedMat);
-            
-            // Map to sphere radius
-            seed.position.x = 3.6 * Math.sin(phi) * Math.cos(theta);
-            seed.position.y = 3.6 * Math.cos(phi);
-            seed.position.z = 3.6 * Math.sin(phi) * Math.sin(theta);
-            
-            // Orient seed flat against the surface
-            seed.lookAt(0,0,0);
-            seed.rotateX(Math.PI / 2);
-            
-            // Apply the same squash scale to position to match the bun curve
-            seed.position.y *= 0.65; 
-            
-            // Add a little random rotation so they don't look perfectly uniform
-            seed.rotateZ(Math.random() * Math.PI);
-            
-            topBun.add(seed);
-        }
         burgerGroup.add(topBun);
 
-        // 2. Tomatoes (Cylinders)
-        const tomatoGeo = new THREE.CylinderGeometry(2.8, 2.8, 0.4, 32);
-        const tomato1 = new THREE.Mesh(tomatoGeo, matTomato);
-        tomato1.userData = { baseY: 0.7, baseX: 0.8, baseZ: 0.5 };
-        burgerGroup.add(tomato1);
-
-        const tomato2 = new THREE.Mesh(tomatoGeo, matTomato);
-        tomato2.userData = { baseY: 0.5, baseX: -0.8, baseZ: -0.5 };
-        burgerGroup.add(tomato2);
-
-        // 3. Lettuce (Wavy Plane)
-        const lettuceGeo = new THREE.PlaneGeometry(6.8, 6.8, 32, 32); // Made lettuce smaller (was 8x8)
-        const lPos = lettuceGeo.attributes.position;
-        for (let i = 0; i < lPos.count; i++) {
-            // Adjusted noise frequency for smaller size
-            const z = Math.sin(lPos.getX(i) * 3.5) * 0.3 + Math.cos(lPos.getY(i) * 4.5) * 0.3;
-            lPos.setZ(i, z);
+        const sauceGeo = new THREE.CylinderGeometry(3.2, 3.2, 0.3, 16);
+        const sPos = sauceGeo.attributes.position;
+        for (let i = 0; i < sPos.count; i++) {
+            let z = sPos.getZ(i); let x = sPos.getX(i);
+            sPos.setY(i, sPos.getY(i) + Math.sin(x * 2) * 0.1 + Math.cos(z * 2) * 0.1);
         }
-        lettuceGeo.computeVertexNormals();
-        const lettuce = new THREE.Mesh(lettuceGeo, matLettuce);
-        lettuce.rotation.x = -Math.PI / 2;
-        lettuce.userData = { baseY: 0.1, baseX: 0, baseZ: 0 };
-        burgerGroup.add(lettuce);
+        sauceGeo.computeVertexNormals();
+        const sauce = new THREE.Mesh(sauceGeo, matSauce);
+        addPopArtEdges(sauce, 0x1A1A1A, 20);
+        sauce.userData = { baseY: 1.5, baseX: 0, baseZ: 0 };
+        burgerGroup.add(sauce);
 
-        // 4. Melted Cheese (Plane with drooping edges)
-        const cheeseGeo = new THREE.PlaneGeometry(7.5, 7.5, 32, 32); // Slightly wider to drape properly
-        const cPos = cheeseGeo.attributes.position;
-        for(let i=0; i<cPos.count; i++) {
-            let x = cPos.getX(i);
-            let y = cPos.getY(i);
-            let dist = Math.sqrt(x*x + y*y);
-            let z = 0;
-            // Droop only starts OUTSIDE the patty radius (3.6) to prevent overlapping/clipping
-            if(dist > 3.6) {
-                z = -(dist - 3.6) * 1.2; 
-            }
-            cPos.setZ(i, z);
+        const picklesGroup = new THREE.Group();
+        picklesGroup.userData = { baseY: 1.1, baseX: 0, baseZ: 0 };
+        const pickleGeo = new THREE.CylinderGeometry(0.9, 0.9, 0.2, 16);
+        const positions = [[1.2, 0, 1.2], [-1.2, 0, 0.8], [0.5, 0, -1.5]];
+        positions.forEach(pos => {
+            const pickle = new THREE.Mesh(pickleGeo, matPickle);
+            addPopArtEdges(pickle, 0x0A3D20, 20);
+            pickle.position.set(pos[0], pos[1], pos[2]);
+            pickle.rotation.y = Math.random() * Math.PI;
+            pickle.rotation.x = (Math.random() - 0.5) * 0.2;
+            picklesGroup.add(pickle);
+        });
+        burgerGroup.add(picklesGroup);
+
+        // FIX: Juicier, curve-based melted droop instead of stiff angles
+        const jarlsbergGeo = new THREE.PlaneGeometry(5.8, 5.8, 24, 24); // Increased segments for smoother melt
+        const jPos = jarlsbergGeo.attributes.position;
+        for (let i = 0; i < jPos.count; i++) {
+            let x = jPos.getX(i); let y = jPos.getY(i);
+            let dist = Math.sqrt(x * x + y * y);
+            // Exponential droop for a gooey effect
+            let z = dist > 3.0 ? -Math.pow(dist - 3.0, 1.4) * 0.8 : 0;
+            jPos.setZ(i, z);
         }
-        cheeseGeo.computeVertexNormals();
-        const cheese = new THREE.Mesh(cheeseGeo, matCheese);
-        cheese.rotation.x = -Math.PI / 2;
-        cheese.userData = { baseY: -0.15, baseX: 0, baseZ: 0 }; // Placed flush with the thinner patty
-        burgerGroup.add(cheese);
+        jarlsbergGeo.computeVertexNormals();
+        const jarlsberg = new THREE.Mesh(jarlsbergGeo, matJarlsberg);
+        jarlsberg.rotation.x = -Math.PI / 2;
+        jarlsberg.rotation.z = Math.PI / 4;
+        addPopArtEdges(jarlsberg, 0x1A1A1A, 20);
+        jarlsberg.userData = { baseY: 0.7, baseX: 0, baseZ: 0 };
+        burgerGroup.add(jarlsberg);
 
-        // 5. Rough Patty (Cylinder with noisy edges)
-        const pattyGeo = new THREE.CylinderGeometry(3.6, 3.6, 0.8, 64, 4); // Made thinner (was 1.2)
+        // FIX: Juicier American cheese melt
+        const americanGeo = new THREE.PlaneGeometry(6.0, 6.0, 24, 24);
+        const aPos = americanGeo.attributes.position;
+        for (let i = 0; i < aPos.count; i++) {
+            let x = aPos.getX(i); let y = aPos.getY(i);
+            let dist = Math.sqrt(x * x + y * y);
+            let z = dist > 3.2 ? -Math.pow(dist - 3.2, 1.4) * 0.8 : 0;
+            aPos.setZ(i, z);
+        }
+        americanGeo.computeVertexNormals();
+        const american = new THREE.Mesh(americanGeo, matAmerican);
+        american.rotation.x = -Math.PI / 2;
+        addPopArtEdges(american, 0x1A1A1A, 20);
+        american.userData = { baseY: 0.4, baseX: 0, baseZ: 0 };
+        burgerGroup.add(american);
+
+        const pattyGeo = new THREE.CylinderGeometry(3.7, 3.5, 0.6, 32, 2);
         const pPos = pattyGeo.attributes.position;
-        for(let i=0; i<pPos.count; i++) {
-            let x = pPos.getX(i);
-            let z = pPos.getZ(i);
-            let radius = Math.sqrt(x*x + z*z);
-            if (radius > 3.0) { // Add procedural noise to the outer edge of the meat
+        for (let i = 0; i < pPos.count; i++) {
+            let x = pPos.getX(i); let z = pPos.getZ(i);
+            let radius = Math.sqrt(x * x + z * z);
+            if (radius > 3.0) {
                 let angle = Math.atan2(z, x);
-                let noise = Math.sin(angle * 30) * 0.04 + Math.cos(angle * 20) * 0.04;
-                pPos.setX(i, x + x*noise);
-                pPos.setZ(i, z + z*noise);
+                let noise = Math.sin(angle * 15) * 0.06 + Math.cos(angle * 10) * 0.05;
+                pPos.setX(i, x + x * noise);
+                pPos.setZ(i, z + z * noise);
             }
         }
         pattyGeo.computeVertexNormals();
         const patty = new THREE.Mesh(pattyGeo, matPatty);
-        patty.userData = { baseY: -0.8, baseX: 0, baseZ: 0 };
+        addPopArtEdges(patty);
+        patty.userData = { baseY: -0.2, baseX: 0, baseZ: 0 };
         burgerGroup.add(patty);
 
-        // 6. Bottom Bun
-        const bottomBunGeo = new THREE.CylinderGeometry(3.5, 3.2, 1.4, 64);
+        const bottomBunGeo = new THREE.CylinderGeometry(3.5, 3.2, 1.0, 32);
         const bottomBun = new THREE.Mesh(bottomBunGeo, matBun);
-        bottomBun.userData = { baseY: -2.0, baseX: 0, baseZ: 0 }; // Lifted to close the gap
+        addPopArtEdges(bottomBun);
+        bottomBun.userData = { baseY: -1.0, baseX: 0, baseZ: 0 };
         burgerGroup.add(bottomBun);
 
-        // Position group slightly to the right for desktop, centered for mobile
+        const wrapperGeo = new THREE.CylinderGeometry(5.6, 4.2, 4.0, 32, 1, true, Math.PI * 0.15, Math.PI * 1.7);
+        const wrapper = new THREE.Mesh(wrapperGeo, matWrapper);
+        addPopArtEdges(wrapper, 0x1A1A1A, 50);
+
+        wrapper.userData = { baseY: -0.8, baseX: 0, baseZ: 0 };
+        wrapper.rotation.x = -0.15;
+        burgerGroup.add(wrapper);
+
         const updateBurgerPosition = () => {
-            if(window.innerWidth > 768) {
+            if (window.innerWidth > 768) {
                 burgerGroup.position.x = 4;
             } else {
                 burgerGroup.position.x = 0;
@@ -598,7 +611,6 @@
         };
         updateBurgerPosition();
 
-        // Mouse Parallax Interaction
         let mouseX = 0;
         let mouseY = 0;
         let targetX = 0;
@@ -611,7 +623,6 @@
             mouseY = (event.clientY - windowHalfY);
         });
 
-        // Animation Loop
         const clock = new THREE.Clock();
 
         function animate3D() {
@@ -619,28 +630,29 @@
             const elapsedTime = clock.getElapsedTime();
 
             targetX = mouseX * 0.001;
-            targetY = mouseY * 0.001;
-            
-            burgerGroup.rotation.y += 0.003; // Constant slow spin
-            
-            // Apply Parallax based on mouse
+
+            // FIX: Clamped the Y target so the burger can only tilt forward, never backward.
+            // This prevents the user from ever seeing the flat underside.
+            targetY = Math.max(-0.05, mouseY * 0.001);
+
+            burgerGroup.rotation.y += 0.003;
+
             burgerGroup.rotation.x += 0.05 * (targetY - burgerGroup.rotation.x);
             burgerGroup.rotation.z += 0.05 * (targetX - burgerGroup.rotation.z);
 
-            // Apply base scroll coordinates + floating sine wave maths
             topBun.position.set(topBun.userData.baseX, topBun.userData.baseY + Math.sin(elapsedTime * 1.5) * 0.15, topBun.userData.baseZ);
-            tomato1.position.set(tomato1.userData.baseX, tomato1.userData.baseY + Math.cos(elapsedTime * 1.8) * 0.1, tomato1.userData.baseZ);
-            tomato2.position.set(tomato2.userData.baseX, tomato2.userData.baseY + Math.sin(elapsedTime * 2.1) * 0.1, tomato2.userData.baseZ);
-            lettuce.position.set(lettuce.userData.baseX, lettuce.userData.baseY + Math.cos(elapsedTime * 1.4) * 0.08, lettuce.userData.baseZ);
-            cheese.position.set(cheese.userData.baseX, cheese.userData.baseY + Math.sin(elapsedTime * 1.6) * 0.05, cheese.userData.baseZ);
+            sauce.position.set(sauce.userData.baseX, sauce.userData.baseY + Math.sin(elapsedTime * 1.6) * 0.12, sauce.userData.baseZ);
+            picklesGroup.position.set(picklesGroup.userData.baseX, picklesGroup.userData.baseY + Math.sin(elapsedTime * 1.4) * 0.1, picklesGroup.userData.baseZ);
+            jarlsberg.position.set(jarlsberg.userData.baseX, jarlsberg.userData.baseY + Math.sin(elapsedTime * 1.7) * 0.08, jarlsberg.userData.baseZ);
+            american.position.set(american.userData.baseX, american.userData.baseY + Math.sin(elapsedTime * 1.5) * 0.06, american.userData.baseZ);
             patty.position.set(patty.userData.baseX, patty.userData.baseY, patty.userData.baseZ);
             bottomBun.position.set(bottomBun.userData.baseX, bottomBun.userData.baseY + Math.sin(elapsedTime * 1.5 + Math.PI) * 0.1, bottomBun.userData.baseZ);
+            wrapper.position.set(wrapper.userData.baseX, wrapper.userData.baseY + Math.sin(elapsedTime * 1.5 + Math.PI) * 0.05, wrapper.userData.baseZ);
 
             renderer.render(scene, camera);
         }
         animate3D();
 
-        // Handle Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
@@ -651,10 +663,9 @@
         // --- UI ANIMATIONS & LOGIC (GSAP) ---
         gsap.registerPlugin(ScrollTrigger);
 
-        // Custom Cursor
         const cursorDot = document.querySelector('.cursor-dot');
         const cursorOutline = document.querySelector('.cursor-outline');
-        
+
         window.addEventListener('mousemove', (e) => {
             const posX = e.clientX;
             const posY = e.clientY;
@@ -665,7 +676,7 @@
 
         document.querySelectorAll('[data-cursor="order"], a, button').forEach(el => {
             el.addEventListener('mouseenter', () => {
-                if(el.getAttribute('data-cursor') === 'order') {
+                if (el.getAttribute('data-cursor') === 'order') {
                     document.body.classList.add('hover-order');
                 } else {
                     cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
@@ -679,26 +690,24 @@
             });
         });
 
-        // Loader & Initial Animations
         window.addEventListener('load', () => {
             const tl = gsap.timeline();
 
             burgerGroup.scale.set(0, 0, 0);
 
             tl.to("#burger-fill", { clipPath: "inset(0% 0 0 0)", duration: 1.5, ease: "power2.inOut" })
-            .to("#loader", { yPercent: -100, duration: 0.8, ease: "power4.inOut", delay: 0.2 })
-            .to(burgerGroup.scale, { x: 1, y: 1, z: 1, duration: 1.5, ease: "elastic.out(1, 0.5)" }, "-=0.5")
-            .to(".hero-text-1", { y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, "-=1.2")
-            .to(".hero-text-2", { y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, "-=1.0")
-            .to(".hero-text-3", { y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, "-=1.0")
-            .to(".hero-subtext", { opacity: 1, y: -10, duration: 0.8 }, "-=0.8")
-            .to(".hero-btn", { opacity: 1, y: -10, duration: 0.8 }, "-=0.6")
-            .to(".hero-scroll", { opacity: 1, duration: 1 }, "-=0.5");
+                .to("#loader", { yPercent: -100, duration: 0.8, ease: "power4.inOut", delay: 0.2 })
+                .to(burgerGroup.scale, { x: 1, y: 1, z: 1, duration: 1.5, ease: "elastic.out(1, 0.5)" }, "-=0.5")
+                .to(".hero-text-1", { y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, "-=1.2")
+                .to(".hero-text-2", { y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, "-=1.0")
+                .to(".hero-text-3", { y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }, "-=1.0")
+                .to(".hero-subtext", { opacity: 1, y: -10, duration: 0.8 }, "-=0.8")
+                .to(".hero-btn", { opacity: 1, y: -10, duration: 0.8 }, "-=0.6")
+                .to(".hero-scroll", { opacity: 1, duration: 1 }, "-=0.5");
 
             gsap.to(".scroll-line-anim", { yPercent: 100, repeat: -1, duration: 1.5, ease: "power2.inOut" });
         });
 
-        // --- SCROLL DECONSTRUCTION TRIGGER ---
         const tl3D = gsap.timeline({
             scrollTrigger: {
                 trigger: "body",
@@ -708,32 +717,30 @@
             }
         });
 
-        tl3D.to(burgerGroup.position, { 
-            x: window.innerWidth > 768 ? -4 : 0, 
-            y: 2, 
-            ease: "none" 
+        tl3D.to(burgerGroup.position, {
+            x: window.innerWidth > 768 ? -4 : 0,
+            y: 2,
+            ease: "none"
         }, 0);
-        tl3D.to(burgerGroup.rotation, { 
-            y: Math.PI * 2.5, 
-            x: 0.5, 
-            ease: "none" 
+        tl3D.to(burgerGroup.rotation, {
+            y: Math.PI * 2.5,
+            x: 0.5,
+            ease: "none"
         }, 0);
 
-        // Explode realistic layers apart (updated coordinates for new stack height)
-        tl3D.to(topBun.userData, { baseY: 10, baseX: 1.5, baseZ: -2, ease: "none" }, 0)
-            .to(tomato1.userData, { baseY: 6, baseX: 4, baseZ: 3, ease: "none" }, 0)
-            .to(tomato2.userData, { baseY: 4, baseX: -3, baseZ: -3, ease: "none" }, 0)
-            .to(lettuce.userData, { baseY: 2, baseX: 2, ease: "none" }, 0)
-            .to(cheese.userData, { baseY: -1.5, baseX: -2, baseZ: 2, ease: "none" }, 0)
-            .to(patty.userData, { baseY: -5, ease: "none" }, 0)
-            .to(bottomBun.userData, { baseY: -10, baseX: -1, baseZ: -1, ease: "none" }, 0);
+        tl3D.to(topBun.userData, { baseY: 12, baseX: 1.5, baseZ: -2, ease: "none" }, 0)
+            .to(sauce.userData, { baseY: 9, baseX: 2, baseZ: -1, ease: "none" }, 0)
+            .to(picklesGroup.userData, { baseY: 6, baseX: -2, baseZ: 2, ease: "none" }, 0)
+            .to(jarlsberg.userData, { baseY: 3, baseX: 1.5, baseZ: 1, ease: "none" }, 0)
+            .to(american.userData, { baseY: 0, baseX: -1.5, baseZ: -1, ease: "none" }, 0)
+            .to(patty.userData, { baseY: -3, ease: "none" }, 0)
+            .to(bottomBun.userData, { baseY: -7, baseX: -1, baseZ: -1, ease: "none" }, 0)
+            .to(wrapper.userData, { baseY: -11, baseX: -0.5, baseZ: -0.5, ease: "none" }, 0);
 
-
-        // UI Scroll Reveals
-        gsap.from(".story-content > *", { y: 50, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out", scrollTrigger: { trigger: "#story", start: "top 75%" }});
-        gsap.to(".parallax-img", { y: "10%", ease: "none", scrollTrigger: { trigger: ".parallax-img-container", start: "top bottom", end: "bottom top", scrub: true }});
-        gsap.from(".menu-card", { y: 100, opacity: 0, duration: 1, stagger: 0.2, ease: "power4.out", scrollTrigger: { trigger: "#menu", start: "top 75%" }});
-        gsap.from(".cta-text", { scale: 0.8, opacity: 0, duration: 1.5, ease: "elastic.out(1, 0.3)", scrollTrigger: { trigger: ".cta-text", start: "top 80%" }});
+        gsap.from(".story-content > *", { y: 50, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out", scrollTrigger: { trigger: "#story", start: "top 75%" } });
+        gsap.to(".parallax-img", { y: "10%", ease: "none", scrollTrigger: { trigger: ".parallax-img-container", start: "top bottom", end: "bottom top", scrub: true } });
+        gsap.from(".menu-card", { y: 100, opacity: 0, duration: 1, stagger: 0.2, ease: "power4.out", scrollTrigger: { trigger: "#menu", start: "top 75%" } });
+        gsap.from(".cta-text", { scale: 0.8, opacity: 0, duration: 1.5, ease: "elastic.out(1, 0.3)", scrollTrigger: { trigger: ".cta-text", start: "top 80%" } });
 
         document.head.insertAdjacentHTML("beforeend", `<style>
             .animate-spin-slow { animation: spin 10s linear infinite; }
@@ -741,4 +748,5 @@
         </style>`);
     </script>
 </body>
+
 </html>
